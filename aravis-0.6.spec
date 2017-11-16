@@ -11,16 +11,17 @@ Source0:	http://ftp.gnome.org/pub/gnome/sources/aravis/0.5/aravis-%{version}.tar
 
 BuildRequires:	desktop-file-utils
 BuildRequires:	intltool
-BuildRequires:	gobject-introspection-devel
+#BuildRequires:	gobject-introspection-devel
 BuildRequires:	pkgconfig(glib-2.0) >= 2.26
 BuildRequires:	pkgconfig(gobject-2.0)
 BuildRequires:	pkgconfig(gio-2.0)
 BuildRequires:	pkgconfig(libxml-2.0)
 BuildRequires:	pkgconfig(gthread-2.0)
-BuildRequires:	pkgconfig(gtk+-3.0)
-BuildRequires:	pkgconfig(libnotify)
-BuildRequires:	pkgconfig(gstreamer-base-1.0) >= 1.0
-BuildRequires:	pkgconfig(gstreamer-app-1.0)
+BuildRequires:	pkgconfig(gtk-doc)
+#BuildRequires:	pkgconfig(gtk+-3.0)
+#BuildRequires:	pkgconfig(libnotify)
+#BuildRequires:	pkgconfig(gstreamer-base-1.0) >= 1.0
+#BuildRequires:	pkgconfig(gstreamer-app-1.0)
 BuildRequires:	pkgconfig(libusb-1.0)
 BuildRequires:	pkgconfig(libcap-ng)
 BuildRequires:	pkgconfig(audit)
@@ -46,21 +47,21 @@ Aravis is a glib/gobject based library for video acquisition using Genicam camer
 
 This package contains the development files for Aravis.
 
-%package viewer
-Summary:	Aravis digital video camera acquisition library -- Viewer
-Group:		Development/Libraries
-Requires:	%{name} = %{version}
-Requires:	libnotify
-Requires:	gtk3
-Requires:	gstreamer1-plugins-base
-Requires:	gstreamer1-plugins-good
-Requires:	gstreamer1-plugins-bad-free
-Obsoletes:	aravis-0.4-viewer
-
-%description viewer
-Aravis is a glib/gobject based library for video acquisition using Genicam cameras. It currently implements the gigabit ethernet and USB3 protocols used by industrial cameras.
-
-This package contains the simple video viewer application.
+#%package viewer
+#Summary:	Aravis digital video camera acquisition library -- Viewer
+#Group:		Development/Libraries
+#Requires:	%{name} = %{version}
+#Requires:	libnotify
+#Requires:	gtk3
+#Requires:	gstreamer1-plugins-base
+#Requires:	gstreamer1-plugins-good
+#Requires:	gstreamer1-plugins-bad-free
+O#bsoletes:	aravis-0.4-viewer
+#
+#%description viewer
+#Aravis is a glib/gobject based library for video acquisition using Genicam cameras. It currently implements the gigabit ethernet and USB3 protocols used by industrial cameras.
+#
+#This package contains the simple video viewer application.
 
 %package static
 Summary:	Aravis digital video camera acquisition library -- Static development files
@@ -72,51 +73,53 @@ Aravis is a glib/gobject based library for video acquisition using Genicam camer
 
 This package contains the static development files for Aravis.
 
-%package gstreamer1
-
-Summary:	Aravis digital video camera acquisition library -- GStreamer 1.0 plugin
-Group:		Development/Libraries
-Requires:	%{name} = %{version}
-Requires:	gstreamer1-plugins-base
-
-%description gstreamer1
-Aravis is a glib/gobject based library for video acquisition using Genicam cameras. It currently implements the gigabit ethernet and USB3 protocols used by industrial cameras.
-
-This package contains the GStreamer plugin.
+#%package gstreamer1
+#
+#Summary:	Aravis digital video camera acquisition library -- GStreamer 1.0 plugin
+#Group:		Development/Libraries
+#Requires:	%{name} = %{version}
+#Requires:	gstreamer1-plugins-base
+#
+#%description gstreamer1
+#Aravis is a glib/gobject based library for video acquisition using Genicam cameras. It currently implements the gigabit ethernet and USB3 protocols used by industrial cameras.
+#
+#This package contains the GStreamer plugin.
 
 %prep
 %setup -q -n aravis-%{version}
 
 %build
-%configure --enable-usb --enable-packet-socket --enable-viewer --enable-gst-plugin --disable-gst-0.10-plugin
+%configure --enable-usb --enable-packet-socket --disable-viewer --disable-gst-plugin --disable-gst-0.10-plugin
 make %{?_smp_mflags}
 
 
 %install
 %make_install
 %find_lang %{name}
-desktop-file-install --vendor=""						\
-       --dir=%{buildroot}%{_datadir}/applications/				\
-       %{buildroot}%{_datadir}/applications/arv-viewer.desktop
+#desktop-file-install --vendor=""						\
+#       --dir=%{buildroot}%{_datadir}/applications/				\
+#       %{buildroot}%{_datadir}/applications/arv-viewer.desktop
 
 # remove .la files
 find ${RPM_BUILD_ROOT} -type f -name "*.la" -exec rm -f {} ';'
+# remove .mo files
+find ${RPM_BUILD_ROOT} -type f -name "*.mo" -exec rm -f {} ';'
 
-%post viewer
-touch --no-create %{_datadir}/icons/hicolor
-if [ -x %{_bindir}/gtk-update-icon-cache ]; then
-  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/hicolor;
-fi
-update-mime-database %{_datadir}/mime &> /dev/null || :
-update-desktop-database &> /dev/null || :
-
-%postun viewer
-touch --no-create %{_datadir}/icons/hicolor
-if [ -x %{_bindir}/gtk-update-icon-cache ]; then
-  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/hicolor;
-fi
-update-mime-database %{_datadir}/mime &> /dev/null || :
-update-desktop-database &> /dev/null || :
+#%post viewer
+#touch --no-create %{_datadir}/icons/hicolor
+#if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+#  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/hicolor;
+#fi
+#update-mime-database %{_datadir}/mime &> /dev/null || :
+#update-desktop-database &> /dev/null || :
+#
+#%postun viewer
+#touch --no-create %{_datadir}/icons/hicolor
+#if [ -x %{_bindir}/gtk-update-icon-cache ]; then
+#  %{_bindir}/gtk-update-icon-cache -q %{_datadir}/icons/hicolor;
+#fi
+#update-mime-database %{_datadir}/mime &> /dev/null || :
+#update-desktop-database &> /dev/null || :
 
 %files
 %{_bindir}/arv-tool-%{majorversion}
@@ -124,29 +127,29 @@ update-desktop-database &> /dev/null || :
 %{_bindir}/arv-fake-gv-camera-%{majorversion}
 %{_datadir}/%{name}/*.xml
 %{_libdir}/lib%{name}*.so.*
-%{_libdir}/girepository-1.0/*
+#%{_libdir}/girepository-1.0/*
 %{_docdir}/aravis/%{name}
 
 %files devel
 %{_datadir}/gtk-doc/html/%{name}
 %{_includedir}/%{name}
 %{_libdir}/pkgconfig/*
-%{_datadir}/gir-1.0/*
+#%{_datadir}/gir-1.0/*
 %{_libdir}/lib%{name}*.so
 
 %files static
 %{_libdir}/lib%{name}*.a
 
-%files -f %{name}.lang viewer
-%{_bindir}/arv-viewer
-%{_datadir}/%{name}/*.ui
-%{_datadir}/icons/hicolor/*/apps/*
-%{_datadir}/icons/hicolor/*/devices/*				   
-%{_datadir}/applications/arv-viewer.desktop
-%{_datadir}/appdata/arv-viewer.appdata.xml
-
-%files gstreamer1
-%{_libdir}/gstreamer-1.0/*
+#%files -f %{name}.lang viewer
+#%{_bindir}/arv-viewer
+#%{_datadir}/%{name}/*.ui
+#%{_datadir}/icons/hicolor/*/apps/*
+#%{_datadir}/icons/hicolor/*/devices/*				   
+#%{_datadir}/applications/arv-viewer.desktop
+#%{_datadir}/appdata/arv-viewer.appdata.xml
+#
+#%files gstreamer1
+#%{_libdir}/gstreamer-1.0/*
 
 %changelog
 * Fri Nov 10 2017 Emmanuel Pacaud <emmanuel@gnome.org> 0.5.10-1
